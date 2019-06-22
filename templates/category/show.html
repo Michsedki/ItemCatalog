@@ -1,0 +1,25 @@
+{% extends "layout.html" %} {% block content %}
+<div class="row">
+    <div class="col-md-3" class="categories">
+        <h1>Category</h1>
+
+        <div class="row">
+            <div class="col-md-12">
+                <h3>{{category.name}}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-9" class="items">
+        <h1>All Items</h1>
+        {% for item in items %}
+        <div class="row">
+            <div class="col-md-12">
+                <h3>{{item.name}}</h3>
+            </div>
+        </div> {% endfor %}
+
+    </div>
+</div>
+
+
+{% endblock %}
