@@ -5,6 +5,9 @@
 <head>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
+    <!--LOAD PRE-REQUISITES FOR GOOGLE SIGN IN -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js">
+    </script>
     <script src="//apis.google.com/js/platform.js?onload=start">
     </script>
     <meta name="google-signin-client_id" content="1026265417701-s8b83o01hj1di77mtm0u98v1i7b0e4ha.apps.googleusercontent.com">
@@ -23,11 +26,24 @@
                     <a class="nav-link" href="/">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/login">Login</a>
+                    {% if 'username' not in session %}
+                    <a class="nav-link" href="/login">Login</a> {% else %}
+                    <a class="nav-link" href="/logout">Logout</a> {% endif %}
                 </li>
             </ul>
         </div>
     </nav>
+
+    {% with messages = get_flashed_messages() %} {% if messages %}
+    <ul class=flashes>
+        {% for message in messages %}
+        <div class="alert alert-primary" role="alert">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </ul>
+    {% endif %} {% endwith %}
+
     <div id="header">
 
     </div>

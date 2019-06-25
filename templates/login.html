@@ -2,12 +2,13 @@
 
 
 <div id="signinButton">
-    <span class="g-signin2" data-scope="openid email" data-clientid="1026265417701-s8b83o01hj1di77mtm0u98v1i7b0e4ha.apps.googleusercontent.com" data-redirecturi="postmessage" data-accesstype="offline" data-cookiepolicy="single_host_origin" data-callback="signInCallback"
+    <span class="g-signin" data-scope="openid email" data-clientid="1026265417701-s8b83o01hj1di77mtm0u98v1i7b0e4ha.apps.googleusercontent.com" data-redirecturi="postmessage" data-accesstype="offline" data-cookiepolicy="single_host_origin" data-callback="signInCallback"
         data-approvalprompt="force">
         Login
         </span>
 </div>
-</div>
+
+<div id="result"></div>
 
 
 <script>
@@ -28,7 +29,7 @@
                     if (result) {
                         $('#result').html('Login Successful!</br>' + result + '</br>Redirecting...')
                         setTimeout(function() {
-                            window.location.href = "/restaurant";
+                            window.location.href = "/";
                         }, 4000);
 
                     } else if (authResult['error']) {
