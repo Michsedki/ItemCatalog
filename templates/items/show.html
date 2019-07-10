@@ -1,8 +1,11 @@
 {% extends 'layout.html' %} {% block content %}
 
-<h1>Item List</h1>
+
+<h1>{{item.name}}</h1><br>
+<h4 size="250" style="width: 70%">{{item.description}}</h4>
+
+{% if 'username' in session and session['email'] == item.user_email %}
 
 
-
-
-{% endblock %}
+<a role="button" class="btn btn-secondary" style="float:right" ; href=" /catalog/{{item.name}}/edit ">Edit</a><br><br>
+<a role="button " class="btn btn-danger " style="float:right" ; href="/catalog/{{item.name}}/delete">Delete</a> {% endif %} {% endblock %}

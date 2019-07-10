@@ -48,27 +48,22 @@ def login_form():
     if request.method == "GET":
         # Create anti-forgery state token
         state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(32))
-        # print(state)
         login_session['state'] = state
-        print(login_session)
-        # return "The current session state is %s" % login_session['state']
         return render_template('login.html', STATE=state)
-        
-    elif request.method == "POST":   
+    elif request.method == "POST":
         return "Login Handler"
 
-
-    # Check that the access token is valid.
-    access_token = credentials.access_token
-    url = ('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=%s'
-           % access_token)
-    h = httplib2.Http()
-    result = json.loads(h.request(url, 'GET')[1])
-    # If there was an error in the access token info, abort.
-    if result.get('error') is not None:
-        response = make_response(json.dumps(result.get('error')), 500)
-        response.headers['Content-Type'] = 'application/json'
-        return response
+    # # Check that the access token is valid.
+    # access_token = credentials.access_token
+    # url = ('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=%s'
+    #        % access_token)
+    # h = httplib2.Http()
+    # result = json.loads(h.request(url, 'GET')[1])
+    # # If there was an error in the access token info, abort.
+    # if result.get('error') is not None:
+    #     response = make_response(json.dumps(result.get('error')), 500)
+    #     response.headers['Content-Type'] = 'application/json'
+    #     return response
 
 '''
 Catalog Routes
@@ -77,7 +72,31 @@ Catalog Routes
 
 @app.route('/catalog.json')
 def catalog_json():
-    return "index"
+    result = {'Category': []}
+
+# Get all Categories
+    categories = session.query(Category).order_by(asc(Category.name))
+    for cat in categories:
+        cat_obj = {}
+        cat_obj['id']= cat.id
+        cat_obj['name']= cat.name
+        cat_obj['Item']= []
+        
+        #Get all Items in this category
+        items = session.query(CategoryItem).filter_by(category_id=cat.id).all()
+        for item in items:
+
+            item_obj = {}
+            item_obj['cat_id'] = item.category_id
+            item_obj['description'] = item.description
+            item_obj['id'] = item.id
+            item_obj['title'] = item.name
+            
+            cat_obj['Item'].append(item_obj)
+
+        result['Category'].append(cat_obj)
+    return jsonify(result)
+
 
 
 @app.route('/catalog/<path:cat_name>/items')
@@ -90,8 +109,11 @@ def catalog_index(cat_name):
 Item Routes
 '''
 
+
 @app.route('/catalog/<path:item_name>/edit', methods=['GET', 'POST'])
 def item_edit(item_name):
+    if 'username' not in login_session:
+        return redirect('/login')
     item = session.query(CategoryItem).filter_by(name=item_name).one()
 
     if request.method == 'GET':
@@ -113,28 +135,48 @@ def item_edit(item_name):
 
 @app.route('/catalog/create', methods=['GET', 'POST'])
 def item_create():
+    if 'username' not in login_session:
+        return redirect('/login')
+
     if request.method == 'GET':
         categories = session.query(Category).order_by(asc(Category.name))
         return render_template('items/create.html', categories=categories)
-
     elif request.method == "POST":
+        print("yahoooooooo")
         if request.form['name'] and request.form['description'] and request.form['category_id']:
-            newITem = CategoryItem(user_id=1, name=request.form['name'],description=request.form['description'], category_id=request.form['category_id'] )
-        
-        session.add(newITem)
-        session.commit()
+            print("in if")
+            newITem = CategoryItem(user_id=1, user_email=login_session['email'], name=request.form['name'],description=request.form['description'], category_id=request.form['category_id'] )
+            session.add(newITem)
+            session.commit()
+            flash("Item added")
+
+        else:
+            flash("Item not added!")
+
         return redirect(url_for('index'))
     
 
-@app.route('/catalog/<path:item_name>/delete')
+@app.route('/catalog/<path:item_name>/delete', methods=['GET', 'POST'])
 def item_delete(item_name):
+
+    if 'username' not in login_session:
+        return redirect('/login')
+
     item = session.query(CategoryItem).filter_by(name=item_name).one()
-    if request.method == 'GET':
+    if request.method == 'POST':
+        print("wrong")
+        session.delete(item)
+        session.commit()
+        return redirect(url_for('index'))
+    else:
         return render_template('items/delete.html', item=item)
-    elif request.method == "POST":
-        return "delete"
-    
-    # session.delete(itemToDelete)
+
+
+
+@app.route('/catalog/<path:item_name>/show')
+def show(item_name):
+    item = session.query(CategoryItem).filter_by(name=item_name).one()
+    return render_template('items/show.html', item=item)
 
 
 @app.route('/gconnect', methods=['POST'])
@@ -206,9 +248,12 @@ def gconnect():
 
     data = answer.json()
 
-    login_session['username'] = data['name']
+    print(data)
+
+    login_session['username'] = data['email']
     login_session['picture'] = data['picture']
     login_session['email'] = data['email']
+    login_session['uid'] = data['id']
 
     output = ''
     output += '<h1>Welcome, '
@@ -241,7 +286,7 @@ def logout():
     result = h.request(url, 'GET')[0]
     print('result is ')
     print(result)
-    
+
     if(result['status'] == 200):
         flash("Google: Token succesfully revoked")
     else: 
@@ -253,8 +298,9 @@ def logout():
            
     return redirect(url_for('index'))
 
+
 if True or __name__ == '__main__':
-    app.secret_key = 'abcsdfsdf'
+    app.secret_key = 'super_secret_key'
     app.debug = True
     
     app.config['SESSION_TYPE'] = 'filesystem'

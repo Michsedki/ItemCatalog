@@ -12,15 +12,13 @@
     <div class="col-md-9" class="items">
 
         {% if 'username' in session %}
-        <a class="btn btn-success" role="button" href="/catalog/create">Add new item.</a> {% endif %}
+        <a class="btn btn-success" style="float:right" ; role="button" href="/catalog/create">Add new item.</a> {% endif %}
 
         <h1>Recent Items</h1>
         {% for item in items %}
         <div class="row">
             <div class="col-md-12">
-                <h3>
-                    <a href=""></a>
-                </h3>
+                <h3><a href="/catalog/{{item.name}}/show">{{item.name}}</a></h3>
                 <span>{{item.category.name}}</span>
             </div>
         </div> {% endfor %}

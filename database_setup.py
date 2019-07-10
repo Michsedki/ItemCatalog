@@ -45,6 +45,7 @@ class CategoryItem(Base):
     category = relationship(Category)
     user_id = Column(Integer, ForeignKey('user.id'))
     user = relationship(User)
+    user_email = Column(String(255))
     created_date = Column(DateTime, default=datetime.datetime.utcnow)
 
     @property
