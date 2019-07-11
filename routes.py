@@ -78,9 +78,9 @@ def catalog_json():
     categories = session.query(Category).order_by(asc(Category.name))
     for cat in categories:
         cat_obj = {}
-        cat_obj['id']= cat.id
-        cat_obj['name']= cat.name
-        cat_obj['Item']= []
+        cat_obj['id'] = cat.id
+        cat_obj['name'] = cat.name
+        cat_obj['Item'] = []
         
         #Get all Items in this category
         items = session.query(CategoryItem).filter_by(category_id=cat.id).all()
@@ -154,7 +154,7 @@ def item_create():
             flash("Item not added!")
 
         return redirect(url_for('index'))
-    
+
 
 @app.route('/catalog/<path:item_name>/delete', methods=['GET', 'POST'])
 def item_delete(item_name):
@@ -170,7 +170,6 @@ def item_delete(item_name):
         return redirect(url_for('index'))
     else:
         return render_template('items/delete.html', item=item)
-
 
 
 @app.route('/catalog/<path:item_name>/show')
@@ -308,4 +307,4 @@ if True or __name__ == '__main__':
     # sess = Session()
     # sess.init_app(app)
 
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=8000)
