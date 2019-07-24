@@ -32,7 +32,6 @@ session = DBSession()
 Appwise Routes
 '''
 
-
 @app.route('/')
 def index():
     categories = session.query(Category).order_by(asc(Category.name))
@@ -97,6 +96,17 @@ def catalog_json():
         result['Category'].append(cat_obj)
     return jsonify(result)
 
+
+@app.route('/catalog/<path:item_name>/JSON')
+def item_json(item_name):
+
+    item = session.query(CategoryItem).filter_by(name=item_name).one()
+    item_obj = {}
+    item_obj['cat_id'] = item.category_id
+    item_obj['description'] = item.description
+    item_obj['id'] = item.id
+    item_obj['title'] = item.name
+    return jsonify('item', item_obj)
 
 
 @app.route('/catalog/<path:cat_name>/items')
