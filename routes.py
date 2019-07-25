@@ -116,9 +116,9 @@ def item_json(item_name):
 
 @app.route('/catalog/<path:cat_name>/items')
 def catalog_index(cat_name):
+    print("yahoooo")
     category = session.query(Category).filter_by(name=cat_name).one()
-    items = session.query(CategoryItem).filter_by(
-        category_id=category.id).all()
+    items = session.query(CategoryItem).filter_by(category_id=category.id).all()
     return render_template('category/show.html', category=category, items=items)
 
 

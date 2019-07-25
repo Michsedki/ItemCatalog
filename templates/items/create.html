@@ -1,4 +1,4 @@
-{% extends 'layout.html' % } { % block content % }
+{% extends 'layout.html' %} {% block content %}
 <form method="POST">
     <div class="form-group">
         <label for="exampleInputTitle"> Item Title </label>
@@ -10,10 +10,10 @@
         <textarea type="exampleInputDescription" name="description" class="form-control" id="exampleInputDescription" placeholder="Enter Description"></textarea><br>
     </div>
     <select name="category_id"> <br>
-        { % for cat in categories % }
+        {% for cat in categories %}
         <option value = "{{cat.id}} " > {{cat.name}} </option>
-        { % endfor % }
+        {% endfor %}
     </select > <br > <br><br>
     <input type = submit >
 </form >
-{ % endblock % }
+{% endblock %}
