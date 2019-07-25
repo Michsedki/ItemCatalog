@@ -22,7 +22,8 @@ CLIENT_ID = json.loads(
 APPLICATION_NAME = "Catalog Application"
 
 # Connect to Database and create database session
-engine = create_engine('sqlite:///CatItem.db', connect_args={'check_same_thread': False})
+engine = create_engine('sqlite:///CatItem.db',
+                       connect_args={'check_same_thread': False})
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
@@ -32,10 +33,12 @@ session = DBSession()
 Appwise Routes
 '''
 
+
 @app.route('/')
 def index():
     categories = session.query(Category).order_by(asc(Category.name))
-    items = session.query(CategoryItem).order_by((CategoryItem.created_date.desc()))
+    items = session.query(CategoryItem).order_by(
+        (CategoryItem.created_date.desc()))
     return render_template('catalog_index.html', categories=categories, items=items)
 
 
@@ -46,7 +49,8 @@ def index():
 def login_form():
     if request.method == "GET":
         # Create anti-forgery state token
-        state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(32))
+        state = ''.join(random.choice(string.ascii_uppercase +
+                                      string.digits) for x in range(32))
         login_session['state'] = state
         return render_template('login.html', STATE=state)
     elif request.method == "POST":
@@ -64,6 +68,7 @@ def login_form():
     #     response.headers['Content-Type'] = 'application/json'
     #     return response
 
+
 '''
 Catalog Routes
 '''
@@ -80,8 +85,8 @@ def catalog_json():
         cat_obj['id'] = cat.id
         cat_obj['name'] = cat.name
         cat_obj['Item'] = []
-        
-        #Get all Items in this category
+
+        # Get all Items in this category
         items = session.query(CategoryItem).filter_by(category_id=cat.id).all()
         for item in items:
 
@@ -90,7 +95,7 @@ def catalog_json():
             item_obj['description'] = item.description
             item_obj['id'] = item.id
             item_obj['title'] = item.name
-            
+
             cat_obj['Item'].append(item_obj)
 
         result['Category'].append(cat_obj)
@@ -112,8 +117,10 @@ def item_json(item_name):
 @app.route('/catalog/<path:cat_name>/items')
 def catalog_index(cat_name):
     category = session.query(Category).filter_by(name=cat_name).one()
-    items = session.query(CategoryItem).filter_by(category_id=category.id).all()
+    items = session.query(CategoryItem).filter_by(
+        category_id=category.id).all()
     return render_template('category/show.html', category=category, items=items)
+
 
 '''
 Item Routes
@@ -155,7 +162,8 @@ def item_create():
         print("yahoooooooo")
         if request.form['name'] and request.form['description'] and request.form['category_id']:
             print("in if")
-            newITem = CategoryItem(user_id=1, user_email=login_session['email'], name=request.form['name'],description=request.form['description'], category_id=request.form['category_id'] )
+            newITem = CategoryItem(user_id=1, user_email=login_session['email'], name=request.form['name'],
+                                   description=request.form['description'], category_id=request.form['category_id'])
             session.add(newITem)
             session.commit()
             flash("Item added")
@@ -298,20 +306,20 @@ def logout():
 
     if(result['status'] == 200):
         flash("Google: Token succesfully revoked")
-    else: 
+    else:
         flash("Google: Token doesn't exist!")
 
     for i in ['access_token', 'gplus_id', 'username', 'email', 'picture']:
         if i in login_session:
             del login_session[i]
-           
+
     return redirect(url_for('index'))
 
 
 if True or __name__ == '__main__':
     app.secret_key = 'super_secret_key'
     app.debug = True
-    
+
     app.config['SESSION_TYPE'] = 'filesystem'
 
     # sess = Session()
