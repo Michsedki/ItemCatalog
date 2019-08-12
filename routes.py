@@ -364,10 +364,10 @@ def logout():
     print('result is ')
     print(result)
 
-    if(result['status'] == 200):
+    if result['status'] == 200:
         flash("Google: Token succesfully revoked")
     else:
-        flash("Google: Token doesn't exist!")
+        flash("Logged out successfully!")
 
     for i in ['access_token', 'gplus_id', 'username', 'email', 'picture']:
         if i in login_session:
