@@ -9,7 +9,7 @@ import datetime
 Base = declarative_base()
 
 
-class User(Base):
+class Users(Base):
     __tablename__ = 'user'
 
     id = Column(Integer, primary_key=True)
@@ -24,7 +24,7 @@ class Category(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(250), nullable=False)
     user_id = Column(Integer, ForeignKey('user.id'))
-    user = relationship(User)
+    user = relationship(Users)
 
     @property
     def serialize(self):
@@ -44,7 +44,7 @@ class CategoryItem(Base):
     category_id = Column(Integer, ForeignKey('category.id'))
     category = relationship(Category)
     user_id = Column(Integer, ForeignKey('user.id'))
-    user = relationship(User)
+    user = relationship(Users)
     user_email = Column(String(255))
     created_date = Column(DateTime, default=datetime.datetime.utcnow)
 

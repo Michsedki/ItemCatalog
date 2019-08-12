@@ -4,7 +4,7 @@
 <h1>{{item.name}}</h1><br>
 <h4 size="250" style="width: 70%">{{item.description}}</h4>
 
-{% if 'username' in session and session['email'] == item.user_email %}
+{% if 'username' in session and session['id'] == item.user_id %}
 
 
 <a role="button" class="btn btn-secondary" style="float:right" ; href=" /catalog/{{item.name}}/edit ">Edit</a><br><br>
